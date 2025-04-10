@@ -331,6 +331,31 @@ const getChats = async (req, res) => {
 }
 
 /**
+ * Retrieve all groups for the given session ID.
+ *
+ * @function
+ * @async
+ *
+ * @param {Object} req - The request object.
+ * @param {string} req.params.sessionId - The session ID.
+ * @param {Object} res - The response object.
+ *
+ * @returns {Promise<void>} A Promise that resolves when the operation is complete.
+ *
+ * @throws {Error} If the operation fails, an error is thrown.
+ */
+const getGroups = async (req, res) => {
+  try {
+    const client = sessions.get(req.params.sessionId)
+    const chats = await client.getChats()
+    const groups = chats.filter(chat => chat.isGroup);
+    res.json({ success: true, groups })
+  } catch (error) {
+    sendErrorResponse(res, 500, error.message)
+  }
+}
+
+/**
  * Returns the profile picture URL for a given contact ID.
  *
  * @async
@@ -1310,5 +1335,6 @@ module.exports = {
   unarchiveChat,
   unmuteChat,
   unpinChat,
-  getWWebVersion
+  getWWebVersion,
+  getGroups
 }
